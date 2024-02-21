@@ -3,15 +3,10 @@ package org.snakesandladders.model;
 public class Player {
     private final String name;
     private int position;
-    private boolean won;
-
-    private int playerNextTurn;
 
     public Player(String name, int startingPosition) {
         this.name = name;
         this.position = startingPosition;
-        this.won = false;
-        this.playerNextTurn = 0;
     }
 
     public String getName() {
@@ -22,20 +17,17 @@ public class Player {
         return position;
     }
 
-    public void move(int steps) {
-        if (steps < 0) {
-            System.out.println(name + " moves back " + (-steps) + " steps.");
-        } else {
-            System.out.println(name + " moves forward " + steps + " steps.");
-        }
-        this.position += steps;
-        // You can add additional logic here, for example, to check if the player has won.
-    }
+//    public void move(int steps) {
+//        if (steps < 0) {
+//            System.out.println(name + " moves back " + (-steps) + " steps.");
+//        } else {
+//            System.out.println(name + " moves forward " + steps + " steps.");
+//        }
+//        this.position += steps;
+//        // You can add additional logic here, for example, to check if the player has won.
+//    }
     public void setPosition(int position) {
         this.position = position;
     }
 
-    public void setWon(boolean won) {
-        this.won = won;
-    }
 }

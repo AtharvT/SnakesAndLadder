@@ -4,14 +4,11 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class SnakesAndLadderBoard extends Board {
-    private final int startPosition = 1;
 
     private final List<Snake> snakes;
     private final List<Ladder> ladders;
     private final Map<Integer, Integer> snakeHeadPositions = new HashMap<>();
-    private Map<Integer, Integer> ladderBottomPositions = new HashMap<>();
-    private Map<Integer, Integer> crocodile = new HashMap<>();
-    private Map<Integer, Integer> mine = new HashMap<>();
+    private final Map<Integer, Integer> ladderBottomPositions = new HashMap<>();
     private final Set<String> snakeAndLadderSet = new HashSet<>();
 
     private final boolean loadFromConfig;
@@ -40,6 +37,7 @@ public class SnakesAndLadderBoard extends Board {
 
     private void generateRandomPositions(int count, boolean isSnake) {
         while (count > 0) {
+            int startPosition = 1;
             int start = ThreadLocalRandom.current().nextInt(startPosition, size + 1);
             int end = ThreadLocalRandom.current().nextInt(startPosition, size + 1);
             if ((isSnake && end >= start) || (!isSnake && start >= end)) continue;
@@ -78,12 +76,6 @@ public class SnakesAndLadderBoard extends Board {
         if (ladderBottomPositions.containsKey(newPosition)) {
             return ladderBottomPositions.get(newPosition);
         }
-
-        if(mine.containsKey(newPosition)) {
-
-        }
-
-
         return newPosition;
     }
 

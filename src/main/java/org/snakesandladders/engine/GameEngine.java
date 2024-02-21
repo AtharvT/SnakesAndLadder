@@ -9,7 +9,7 @@ import java.util.*;
 
 public class GameEngine {
     private final int numberOfDice;
-    private Queue<Player> players;
+    private final Queue<Player> players;
     private final Dice dice;
     private SnakesAndLadderBoard board;
     private final GameConfig config;
@@ -40,7 +40,6 @@ public class GameEngine {
     }
 
     public void playGame() {
-        int turn = 0;
         while (true) {
             Player player = players.poll();
             int val = 0;
@@ -54,7 +53,6 @@ public class GameEngine {
             int newPosition = player.getPosition() + val;
 
             if (newPosition >= board.getEndPosition()) {
-                player.setWon(true);
                 System.out.println("Player " + player.getName() + " Won.");
                 break;
             } else {

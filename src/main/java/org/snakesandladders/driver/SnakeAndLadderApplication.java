@@ -1,35 +1,31 @@
 package org.snakesandladders.driver;
 
-import org.snakesandladders.config.ConfigLoader;
-import org.snakesandladders.config.GameConfig;
+import org.snakesandladders.engine.RulesEngine;
 import org.snakesandladders.exceptions.GameConfigLoadException;
 import org.snakesandladders.engine.GameEngine;
-import org.snakesandladders.model.Player;
-
-import java.util.Scanner;
+import org.snakesandladders.utils.InputHandler;
 
 public class SnakeAndLadderApplication {
 
     public static void main(String[] args) throws GameConfigLoadException {
 
-        Scanner scanner = new Scanner(System.in);
-        String configPath = "src/main/java/org/snakesandladders/config/config.json";
-        GameConfig config = ConfigLoader.loadConfig(configPath);
-        System.out.println("Enter number of test cases");
-        int t = scanner.nextInt();
-        scanner.nextLine();
+        InputHandler inputHandler = new InputHandler();
+        boolean continueGame = false;
 
-        while (t-- > 0) {
-
-            GameEngine gameEngine = new GameEngine(config.getBoardSize(), config.getNumberOfDies(), config);
-            for (int i = 0; i < config.getNumberOfPlayers(); i++) {
-                System.out.println("Enter player name");
-                String pName = scanner.nextLine();
-                Player player = new Player(pName, 1);
-                gameEngine.addPlayer(player);
+        do {
+            System.out.println("Welcome to Snakes and Ladders! Enter number of games to play: ");
+            try {
+                boolean isManualMode = inputHandler.isManualMode();
+                RulesEngine rulesEngine = new RulesEngine();
+                GameEngine gameEngine = new GameEngine(rulesEngine, inputHandler, isManualMode);
+                gameEngine.playGame();
+            } catch (Exception e) {
+                System.err.println("Failed to load game configuration: " + e.getMessage());
             }
-            gameEngine.playGame();
-        }
-    }
+            continueGame = inputHandler.isContinueGame();
+        } while(continueGame);
 
+        System.out.println("FINISHING THE GAME. THANK YOU");
+        inputHandler.close();
+    }
 }

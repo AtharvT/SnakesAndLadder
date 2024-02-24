@@ -1,85 +1,63 @@
 package org.snakesandladders.model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.snakesandladders.config.GameConfig;
+import org.snakesandladders.exceptions.InvalidGameElementException;
+import org.snakesandladders.model.gameelement.GameElement;
+import org.snakesandladders.model.gameelement.JumperEffect;
+
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class SnakesAndLadderBoard extends Board {
+    private static final Logger logger = LoggerFactory.getLogger(SnakesAndLadderBoard.class);
 
-    private final List<Snake> snakes;
-    private final List<Ladder> ladders;
-    private final Map<Integer, Integer> snakeHeadPositions = new HashMap<>();
-    private final Map<Integer, Integer> ladderBottomPositions = new HashMap<>();
-    private final Set<String> snakeAndLadderSet = new HashSet<>();
-
-    private final boolean loadFromConfig;
-    private final int numberOfSnakes;
-    private final int numberOfLadders;
-
-    public SnakesAndLadderBoard(int size, List<Snake> snakes, List<Ladder> ladders, int numberOfSnakes, int numberOfLadders, boolean loadFromConfig) {
-        super(size);
-        this.snakes = snakes;
-        this.ladders = ladders;
-        this.numberOfSnakes = numberOfSnakes;
-        this.numberOfLadders = numberOfLadders;
-        this.loadFromConfig = loadFromConfig;
+    private final List<GameElement> gameElements = new ArrayList<>();
+    private final Map<Integer, GameElement> positionToElement = new HashMap<>();
+    private final GameConfig config;
+    public SnakesAndLadderBoard(GameConfig config) throws InvalidGameElementException {
+        super(config.getBoardSize());
+        logger.info("Initializing Snakes and Ladder Board");
+        this.config = config;
+        initializeBoard();
     }
 
     @Override
-    protected void initializeBoard() {
-        if (!loadFromConfig) {
-            generateRandomPositions(numberOfSnakes, true);
-            generateRandomPositions(numberOfLadders, false);
-        } else {
-            initializeFromConfig(snakes, true);
-            initializeFromConfig(ladders, false);
-        }
-    }
-
-    private void generateRandomPositions(int count, boolean isSnake) {
-        while (count > 0) {
-            int startPosition = 1;
-            int start = ThreadLocalRandom.current().nextInt(startPosition, size + 1);
-            int end = ThreadLocalRandom.current().nextInt(startPosition, size + 1);
-            if ((isSnake && end >= start) || (!isSnake && start >= end)) continue;
-
-            if (addPosition(start, end, isSnake)) count--;
-        }
-    }
-
-    private <T> void initializeFromConfig(List<T> elements, boolean isSnake) {
-        for (T element : elements) {
-            int start = isSnake ? ((Snake) element).head() : ((Ladder) element).bottom();
-            int end = isSnake ? ((Snake) element).tail() : ((Ladder) element).top();
-            addPosition(start, end, isSnake);
-        }
-    }
-
-    private boolean addPosition(int start, int end, boolean isSnake) {
-        String key = start + "-" + end;
-        if (!snakeAndLadderSet.contains(key)) {
-            if (isSnake) {
-                snakeHeadPositions.put(start, end);
-            } else {
-                ladderBottomPositions.put(start, end);
+    protected void initializeBoard() throws InvalidGameElementException {
+        logger.info("Adding Game Elements to the board");
+        gameElements.addAll(config.getSnakeList());
+        gameElements.addAll(config.getLadderList());
+        for (GameElement element : gameElements) {
+            if (!isPlacementValid(element)) {
+                throw new InvalidGameElementException("Invalid placement for game element at position: " + element.getStart());
             }
-            snakeAndLadderSet.add(key);
-            return true;
+            positionToElement.put(element.getStart(), element);
+            positionToElement.put(element.getEnd(), element);
         }
-        return false;
     }
 
-    public int getNewPosition(int newPosition) {
-        if (snakeHeadPositions.containsKey(newPosition)) {
-            return snakeHeadPositions.get(newPosition);
-        }
-
-        if (ladderBottomPositions.containsKey(newPosition)) {
-            return ladderBottomPositions.get(newPosition);
-        }
-        return newPosition;
+    private boolean isPlacementValid(GameElement element) {
+        return !positionToElement.containsKey(element.getStart()) || !positionToElement.containsKey(element.getEnd());
     }
 
-    public int getEndPosition() {
-        return endPosition;
+
+    @Override
+    public int getSize() {
+        return size;
+    }
+
+    public int getNewPosition(int currentPosition, Player player) {
+        GameElement element = positionToElement.get(currentPosition);
+        if (element != null) {
+            JumperEffect effect = element.applyEffect(player);
+            if (effect.newPosition() != null) {
+                return effect.newPosition();
+            }
+
+            if (effect.turnsHeld() != null) {
+                player.setWaiting(true);
+            }
+        }
+        return currentPosition;
     }
 }

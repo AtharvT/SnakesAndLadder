@@ -3,6 +3,9 @@
 ## Description
 This project implements a classic Snakes and Ladders game in Java. It's designed to be run in a console/terminal and supports multiple players. The game includes a dynamic board setup, dice roll simulation, and automatic navigation of snakes and ladders.
 
+## How to Run
+Run the SnakeAndLadderApplication in the driver folder.
+
 ## Key Features
 - **Driver Application**: Asks for manual input or loads a JSON config as input.
 - **Rules and Game Engine**: Drive the rules and games respectively, adhering to the Single Responsibility Principle.

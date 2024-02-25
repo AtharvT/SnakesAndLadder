@@ -209,7 +209,7 @@ public class InputHandler {
      * @param numberOfSnakes The number of snakes to be added to the game board.
      * @return A set of Snake objects with positions set according to user input.
      */
-    public Set<Snake> getSnakePositions(int numberOfSnakes, Set<String> snakeAndLadderSet) {
+    public Set<Snake> getSnakePositions(int numberOfSnakes, Set<String> snakeAndLadderSet, int boardSize) {
         Set<Snake> snakeList = new HashSet<>();
         for (int i = 1; i <= numberOfSnakes; i++) {
             while (true) {
@@ -226,15 +226,14 @@ public class InputHandler {
                     int head = Integer.parseInt(parts[0]);
                     int tail = Integer.parseInt(parts[1]);
 
-                    if (head <= tail) {
-                        System.out.println("Invalid positions. The head position must be greater than the tail position. Please, try again.");
+                    if (head <= tail || head > boardSize) {
+                        System.out.println("Invalid positions. The head position must be greater than the tail position and the head should be smaller than size. Please, try again.");
                     } else {
                         Snake snake = new Snake(head, tail);
-                        if(!snake.addSnakeIfValid(snakeList,snake) || snakeAndLadderSet.contains(snake.head()+"-"+snake.tail())) {
+                        if (!snake.addSnakeIfValid(snakeList, snake) || snakeAndLadderSet.contains(snake.head() + "-" + snake.tail())) {
                             System.out.println("Duplicate entry for snake not allowed please try again");
-                        }
-                        else {
-                            snakeAndLadderSet.add(snake.head()+"-"+snake.tail());
+                        } else {
+                            snakeAndLadderSet.add(snake.head() + "-" + snake.tail());
                             break;
                         }
 
@@ -253,7 +252,7 @@ public class InputHandler {
      * @param numberOfLadders The number of ladders to be added to the game board.
      * @return A list of Ladder objects with positions set according to user input.
      */
-    public Set<Ladder> getLadderPositions(int numberOfLadders, Set<String> snakeAndLadderSet) {
+    public Set<Ladder> getLadderPositions(int numberOfLadders, Set<String> snakeAndLadderSet, int boardSize) {
         Set<Ladder> ladderList = new HashSet<>();
         for (int i = 1; i <= numberOfLadders; i++) {
             while (true) {
@@ -269,15 +268,14 @@ public class InputHandler {
                     int bottom = Integer.parseInt(parts[0]);
                     int top = Integer.parseInt(parts[1]);
 
-                    if (bottom >= top) {
-                        System.out.println("Invalid positions. The bottom position must be less than the top position. Please, try again.");
+                    if (bottom >= top || top > boardSize) {
+                        System.out.println("Invalid positions. The bottom position must be less than the top position and top should be less than size. Please, try again.");
                     } else {
                         Ladder ladder = new Ladder(bottom, top);
-                        if(!ladder.addLadderIfValid(ladderList, ladder) || snakeAndLadderSet.contains(ladder.top()+"-"+ladder.bottom())) {
+                        if (!ladder.addLadderIfValid(ladderList, ladder) || snakeAndLadderSet.contains(ladder.top() + "-" + ladder.bottom())) {
                             System.out.println("Duplicate entry for ladder not allowed please try again");
-                        }
-                        else {
-                            snakeAndLadderSet.add(ladder.top()+"-"+ladder.bottom());
+                        } else {
+                            snakeAndLadderSet.add(ladder.top() + "-" + ladder.bottom());
                             break;
                         }
                     }

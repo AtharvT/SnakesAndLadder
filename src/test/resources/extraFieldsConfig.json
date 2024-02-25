@@ -1,0 +1,11 @@
+{
+  "numberOfPlayers": 2,
+  "boardSize": 6,
+  "numberOfSnakes": 2,
+  "numberOfLadders": 3,
+  "numberOfDies": 2,
+  "movementStrategy" : "SUM",
+  "trial" : 123
+}
+
+

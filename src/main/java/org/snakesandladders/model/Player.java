@@ -38,11 +38,6 @@ public class Player {
             this.remainingWaitingTurns--;
         }
     }
-
-    public boolean isWon() {
-        return isWon;
-    }
-
     public void setWon(boolean won) {
         isWon = won;
     }

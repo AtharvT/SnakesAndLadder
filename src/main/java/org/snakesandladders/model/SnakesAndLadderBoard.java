@@ -15,9 +15,10 @@ public class SnakesAndLadderBoard extends Board {
     private final List<GameElement> gameElements = new ArrayList<>();
     private final Map<Integer, GameElement> positionToElement = new HashMap<>();
     private final GameConfig config;
+
     public SnakesAndLadderBoard(GameConfig config) throws InvalidGameElementException {
         super(config.getBoardSize());
-        logger.info("Initializing Snakes and Ladder Board");
+        logger.info("Initializing Snakes and Ladder Board with size {}", config.getBoardSize());
         this.config = config;
         initializeBoard();
     }
@@ -29,6 +30,7 @@ public class SnakesAndLadderBoard extends Board {
         gameElements.addAll(config.getLadderList());
         for (GameElement element : gameElements) {
             if (!isPlacementValid(element)) {
+                logger.error("Invalid placement for game element at position: {}", element.getStart());
                 throw new InvalidGameElementException("Invalid placement for game element at position: " + element.getStart());
             }
             positionToElement.put(element.getStart(), element);
@@ -50,11 +52,14 @@ public class SnakesAndLadderBoard extends Board {
         GameElement element = positionToElement.get(currentPosition);
         if (element != null) {
             JumperEffect effect = element.applyEffect(player);
+            logger.info("Player {} encountered a game element at position {}. Applying effect.", player.getName(), currentPosition);
             if (effect.newPosition() != null) {
+                logger.info("Player {} moves to new position {}", player.getName(), effect.newPosition());
                 return effect.newPosition();
             }
 
             if (effect.turnsHeld() != null) {
+                logger.info("Player {} is held for {} turns", player.getName(), effect.turnsHeld());
                 player.setWaitingTurns(effect.turnsHeld());
             }
         }

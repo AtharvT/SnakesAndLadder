@@ -33,7 +33,16 @@ public class Dice {
         }
         return movementStrategy.execute(manualValues);
     }
+
     public int getNumberOfDice() {
         return numberOfDice;
+    }
+
+    public int getMinValue() {
+        return minValue;
+    }
+
+    public int getMaxValue() {
+        return maxValue;
     }
 }

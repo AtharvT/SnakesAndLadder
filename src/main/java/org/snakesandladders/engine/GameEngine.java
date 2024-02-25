@@ -31,6 +31,8 @@ public class GameEngine {
 
     private static final String GAME_CONFIG_PATH = "/config/gameConfig.json";
     private static final String DICE_CONFIG_PATH = "/config/diceConfig.json";
+    static final Integer MAX_TURNS = 100;
+    private int currentTurn = 0;
 
     /**
      * Constructs a GameEngine instance with the specified rules engine, input handler, and mode.
@@ -78,10 +80,8 @@ public class GameEngine {
     }
 
     public void playGame() {
-        int turnCounter = 0;
-        int maxTurns = 100;
-        while (!players.isEmpty() && turnCounter < maxTurns) {
-            turnCounter++;
+        while (!players.isEmpty() && currentTurn < MAX_TURNS) {
+            currentTurn++;
             Player player = players.poll();
             assert player != null;
 
@@ -101,7 +101,7 @@ public class GameEngine {
             }
             players.offer(player);
         }
-        if (turnCounter >= maxTurns) {
+        if (currentTurn >= MAX_TURNS) {
             System.out.println("Game ended due to reaching the maximum number of turns.");
         }
     }
@@ -124,9 +124,9 @@ public class GameEngine {
                 tail = ThreadLocalRandom.current().nextInt(1, head); // Ensure tail is before head
             } while (!isValid(head, tail, snakes));
             var newSnake = new Snake(head, tail);
-           if(newSnake.addSnakeIfValid(snakes, newSnake)) {
-               snakeAndLadderSet.add(tail+"-"+head);
-           }
+            if (newSnake.addSnakeIfValid(snakes, newSnake)) {
+                snakeAndLadderSet.add(tail + "-" + head);
+            }
 
         }
         return snakes;
@@ -149,8 +149,8 @@ public class GameEngine {
                 top = ThreadLocalRandom.current().nextInt(bottom + 1, boardSize); // Ensure top is after bottom
             } while (!isValid(bottom, top, ladders));
             var newLadder = new Ladder(bottom, top);
-            if(newLadder.addLadderIfValid(ladders, newLadder)) {
-                snakeAndLadderSet.add(bottom+"-"+top);
+            if (newLadder.addLadderIfValid(ladders, newLadder)) {
+                snakeAndLadderSet.add(bottom + "-" + top);
             }
         }
 
@@ -199,9 +199,9 @@ public class GameEngine {
 
     private void setupManualGame() {
         config.setNumberOfSnakes(inputHandler.getNumberOfSnakes(config.getBoardSize()));
-        config.setSnakeList(inputHandler.getSnakePositions(config.getNumberOfSnakes(), snakeAndLadderSet));
+        config.setSnakeList(inputHandler.getSnakePositions(config.getNumberOfSnakes(), snakeAndLadderSet, board.getSize()));
         config.setNumberOfLadders(inputHandler.getNumberOfLadders(config.getBoardSize()));
-        config.setLadderList(inputHandler.getLadderPositions(config.getNumberOfLadders(), snakeAndLadderSet));
+        config.setLadderList(inputHandler.getLadderPositions(config.getNumberOfLadders(), snakeAndLadderSet, board.getSize()));
         config.setNumberOfPlayers(inputHandler.addPlayers(players, -1));
         this.dice = inputHandler.getDice(config.getMovementStrategy());
     }
@@ -218,7 +218,7 @@ public class GameEngine {
      *
      * @return boolean false if it is not possible otherwise true
      */
-    private boolean processPlayerMove(Player player, int diceRoll) {
+    boolean processPlayerMove(Player player, int diceRoll) {
         int oldPosition = player.getPosition();
         int newPosition = player.getPosition() + diceRoll;
         player.setPosition(board.getNewPosition(newPosition, player));
@@ -246,5 +246,14 @@ public class GameEngine {
         player.setPosition(newPosition);
         positionToPlayer.put(newPosition, player);
     }
+
+    public Queue<Player> getPlayers() {
+        return players;
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
 }
 

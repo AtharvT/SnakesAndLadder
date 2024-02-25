@@ -9,7 +9,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.snakesandladders.utils.MovementStrategyDeserializer;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class GameConfig implements Config {
     private int numberOfPlayers;
@@ -17,10 +19,10 @@ public class GameConfig implements Config {
     private int numberOfSnakes;
     private int numberOfLadders;
     private int numberOfDies;
-    private List<Snake> snakeList = new ArrayList<>();
-    private List<Ladder> ladderList = new ArrayList<>();
-    private List<Crocodile> crocodiles = new ArrayList<>();
-    private List<Mine> mines = new ArrayList<>();
+    private Set<Snake> snakeList = new HashSet<>();
+    private Set<Ladder> ladderList = new HashSet<>();
+    private Set<Crocodile> crocodiles = new HashSet<>();
+    private Set<Mine> mines = new HashSet<>();
 
     @JsonDeserialize(using = MovementStrategyDeserializer.class)
     private MovementStrategy movementStrategy;
@@ -38,7 +40,7 @@ public class GameConfig implements Config {
     }
 
     public int getBoardSize() {
-        return boardSize*boardSize;
+        return boardSize * boardSize;
     }
 
     public void setBoardSize(int boardSize) {
@@ -69,35 +71,35 @@ public class GameConfig implements Config {
         this.numberOfDies = numberOfDies;
     }
 
-    public List<Snake> getSnakeList() {
+    public Set<Snake> getSnakeList() {
         return snakeList;
     }
 
-    public void setSnakeList(List<Snake> snakeList) {
+    public void setSnakeList(Set<Snake> snakeList) {
         this.snakeList = snakeList;
     }
 
-    public List<Ladder> getLadderList() {
+    public Set<Ladder> getLadderList() {
         return ladderList;
     }
 
-    public void setLadderList(List<Ladder> ladderList) {
+    public void setLadderList(Set<Ladder> ladderList) {
         this.ladderList = ladderList;
     }
 
-    public List<Crocodile> getCrocodiles() {
+    public Set<Crocodile> getCrocodiles() {
         return crocodiles;
     }
 
-    public void setCrocodiles(List<Crocodile> crocodiles) {
+    public void setCrocodiles(Set<Crocodile> crocodiles) {
         this.crocodiles = crocodiles;
     }
 
-    public List<Mine> getMines() {
+    public Set<Mine> getMines() {
         return mines;
     }
 
-    public void setMines(List<Mine> mines) {
+    public void setMines(Set<Mine> mines) {
         this.mines = mines;
     }
 
@@ -115,7 +117,7 @@ public class GameConfig implements Config {
 
         if (numberOfDies <= 0) errors.add("Number of dice must be greater than 0.");
         if (numberOfLadders <= 0) errors.add("Number of ladders must be greater than 0.");
-        if (numberOfPlayers <= 0) errors.add("Number of players must be greater than 0.");
+        if (numberOfPlayers < 2) errors.add("Number of players must be greater than 2.");
         if (numberOfSnakes <= 0) errors.add("Number of snakes must be greater than 0.");
         if (boardSize <= 0) errors.add("Board size must be greater than 0.");
 

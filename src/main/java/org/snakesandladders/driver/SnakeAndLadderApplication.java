@@ -13,7 +13,9 @@ public class SnakeAndLadderApplication {
         boolean continueGame = false;
 
         do {
-            System.out.println("Welcome to Snakes and Ladders! Enter number of games to play: ");
+            System.out.println("WELCOME TO SNAKES AND LADDERS!");
+            System.out.println("");
+            System.out.println("");
             try {
                 boolean isManualMode = inputHandler.isManualMode();
                 RulesEngine rulesEngine = new RulesEngine();

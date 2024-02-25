@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Dice {
     private final int minValue;
     private final int maxValue;
+
     private final int numberOfDice;
     private MovementStrategy movementStrategy;
 
@@ -28,8 +29,11 @@ public class Dice {
     public int manualRoll(int[] manualValues) {
 
         if (manualValues.length > numberOfDice) {
-            throw new RuntimeException("Can't have more than + " + numberOfDice + " dice");
+            throw new IllegalArgumentException("Cannot have more than " + numberOfDice + " dice rolls.");
         }
         return movementStrategy.execute(manualValues);
+    }
+    public int getNumberOfDice() {
+        return numberOfDice;
     }
 }

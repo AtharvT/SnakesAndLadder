@@ -55,9 +55,13 @@ public class SnakesAndLadderBoard extends Board {
             }
 
             if (effect.turnsHeld() != null) {
-                player.setWaiting(true);
+                player.setWaitingTurns(effect.turnsHeld());
             }
         }
         return currentPosition;
+    }
+
+    public List<GameElement> getGameElements() {
+        return gameElements;
     }
 }
